@@ -271,4 +271,4 @@ publish_btn.click()
 
 ---
 
-**🦐 皮皮虾出品 | 让博客发布更简单！**
+**Made with ❤️ by [@MadPrinter](https://github.com/MadPrinter)**

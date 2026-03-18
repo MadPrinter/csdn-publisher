@@ -129,7 +129,7 @@ gh repo create csdn-publisher --public --source=. --push
 
 ---
 
-## 🦐 皮皮虾建议
+## 💡 建议
 
 **最简单的方法：**
 

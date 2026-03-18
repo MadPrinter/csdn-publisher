@@ -225,4 +225,4 @@ C:\Users\Administrator\.openclaw\workspace\skills\csdn-publisher\
 
 ---
 
-**🦐 皮皮虾出品 | 让博客发布更简单！**
+**Made with ❤️ by [@MadPrinter](https://github.com/MadPrinter)**

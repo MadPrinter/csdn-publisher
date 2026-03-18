@@ -362,4 +362,4 @@ cd C:\blog-auto-publishing-tools
 
 ---
 
-**🚀 皮皮虾出品 | 让博客发布完全自动化！**
+**Made with ❤️ by [@MadPrinter](https://github.com/MadPrinter)**
