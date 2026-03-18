@@ -1,0 +1,34 @@
+# CSDN 发布工具配置模板
+# 复制此文件到 C:\blog-auto-publishing-tools\config\common.yaml
+
+# Chrome 调试配置
+service_location: ''  # 留空使用 Selenium Manager 自动管理
+debugger_address: 127.0.0.1:9222
+driver_type: chrome
+
+# 发布选项
+include_footer: false  # 是否添加自定义 footer
+auto_publish: true     # 自动点击发布按钮（设为 false 则手动确认）
+wait_login: true       # 等待用户登录
+wait_login_time: 120   # 登录等待时间（秒）
+
+# 默认值（当 markdown 文件没有 front-matter 时使用）
+title: ''
+summary: ''
+content: ''
+
+# 启用的平台
+enable:
+  csdn: true
+  jianshu: false
+  juejin: false
+  segmentfault: false
+  oschina: false
+  cnblogs: false
+  zhihu: false
+  cto51: false
+  infoq: false
+  toutiao: false
+  alicloud: false
+  txcloud: false
+  mpweixin: false
