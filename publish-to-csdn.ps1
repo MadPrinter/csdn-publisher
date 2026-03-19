@@ -1,5 +1,10 @@
-# CSDN 博客发布工具 - PowerShell 封装
+# CSDN 博客发布工具 - PowerShell 封装（独立版）
 # 用法：.\publish-to-csdn.ps1 -MarkdownFile "C:\path\to\blog.md"
+# 
+# 更新说明 (2026-03-19):
+# - 完全独立，不依赖 blog-auto-publishing-tools
+# - 使用 csdn_publisher_fast.py（20 秒内发布完成）
+# - 所有代码在 skill 目录内
 
 param(
     [Parameter(Mandatory=$true)]
@@ -11,7 +16,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$CSDN_TOOLS_PATH = "C:\blog-auto-publishing-tools"
+$SKILL_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
+$PYTHON_SCRIPT = Join-Path $SKILL_DIR "csdn_publisher_fast.py"
 $CHROME_PORT = 9222
 
 function Write-Color {
@@ -49,11 +55,27 @@ function Start-ChromeDebug {
 }
 
 function Test-PythonEnv {
-    $pythonPath = Join-Path $CSDN_TOOLS_PATH "venv\Scripts\python.exe"
-    if (-not (Test-Path $pythonPath)) {
-        throw "Python 虚拟环境未找到：$pythonPath`n请先运行：cd $CSDN_TOOLS_PATH; py -m venv venv; .\venv\Scripts\activate; pip install -r requirements.txt"
+    # 尝试多个 Python 路径
+    $pythonPaths = @(
+        "python",
+        "python3",
+        (Join-Path $env:USERPROFILE ".pyenv\pyenv-win\shims\python.exe"),
+        "C:\Python310\python.exe",
+        "C:\Python39\python.exe"
+    )
+    
+    foreach ($path in $pythonPaths) {
+        try {
+            $result = Test-Path $path -ErrorAction Stop
+            if ($result -or $path -eq "python" -or $path -eq "python3") {
+                return $path
+            }
+        } catch {
+            continue
+        }
     }
-    return $pythonPath
+    
+    throw "Python 未找到，请确保 Python 已安装并添加到 PATH"
 }
 
 function Test-MarkdownFile {
@@ -70,8 +92,8 @@ function Publish-ToCSDN {
     param([string]$MarkdownFile)
     
     Write-Color "" "White"
-    Write-Color "🦐 CSDN 博客发布助手" "Cyan"
-    Write-Color "=====================" "Cyan"
+    Write-Color "🦐 CSDN 博客发布助手（独立版）" "Cyan"
+    Write-Color "================================" "Cyan"
     Write-Color "" "White"
     
     # 1. 检查 Chrome
@@ -93,22 +115,27 @@ function Publish-ToCSDN {
     
     # 2. 检查 Python 环境
     $pythonPath = Test-PythonEnv
-    Write-Color "✅ Python 环境：$pythonPath" "Green"
+    Write-Color "✅ Python: $pythonPath" "Green"
     
     # 3. 检查文件
     Test-MarkdownFile -Path $MarkdownFile
     Write-Color "✅ 博客文件：$MarkdownFile" "Green"
     
-    # 4. 执行发布
+    # 4. 检查发布脚本
+    if (-not (Test-Path $PYTHON_SCRIPT)) {
+        throw "发布脚本未找到：$PYTHON_SCRIPT"
+    }
+    Write-Color "✅ 发布脚本：$PYTHON_SCRIPT" "Green"
+    
+    # 5. 执行发布（快速版，20 秒内完成）
     Write-Color "" "White"
     Write-Color "📝 开始发布到 CSDN..." "Cyan"
     Write-Color "" "White"
     
-    Set-Location $CSDN_TOOLS_PATH
-    & $pythonPath "publisher/csdn_publisher.py" $MarkdownFile 2>&1
+    & $pythonPath $PYTHON_SCRIPT $MarkdownFile 2>&1
     
     Write-Color "" "White"
-    Write-Color "=====================" "Cyan"
+    Write-Color "================================" "Cyan"
     Write-Color "🎉 发布流程完成！" "Green"
     Write-Color "" "White"
 }
